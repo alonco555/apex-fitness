@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Fitness — Your Elite Fitness OS</title>
+<meta name="description" content="Track workouts, nutrition, and body composition with military precision. The premium fitness app built for those who take training seriously.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;--bg2:#0E0E18;--bg3:#13131E;
+  --surface:#1A1A28;--surface2:#222234;--surface3:#2A2A40;
+  --accent:#C8FF57;--accent2:#57C8FF;--accent3:#FF6B57;--accent4:#B457FF;
+  --text:#F2F2FA;--text2:#9090B0;--text3:#50506A;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --green:#4ADE80;--red:#F87171;--yellow:#FBBF24;
+  --r:16px;--r2:12px;--r3:24px;
+  --font-head:'Syne',sans-serif;--font:'DM Sans',sans-serif;
+  --max:1280px;--gutter:clamp(20px,5vw,80px);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.6;overflow-x:hidden}
+::selection{background:rgba(200,255,87,0.3);color:var(--text)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ── Layout ── */
+.container{max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+.section{padding:clamp(64px,8vw,120px) 0}
+
+/* ── Typography ── */
+.display{font-family:var(--font-head);font-weight:800;letter-spacing:-2px;line-height:0.95}
+.display-xl{font-size:clamp(52px,8vw,96px)}
+.display-lg{font-size:clamp(40px,5vw,64px)}
+.display-md{font-size:clamp(28px,3.5vw,44px)}
+.display-sm{font-size:clamp(22px,2.5vw,32px)}
+h1,h2,h3,h4{font-family:var(--font-head)}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.lead{font-size:clamp(17px,1.5vw,20px);color:var(--text2);line-height:1.65;max-width:600px}
+.accent-text{color:var(--accent)}
+.gradient-text{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px var(--gutter);display:flex;align-items:center;justify-content:space-between;transition:background 0.3s,backdrop-filter 0.3s}
+nav.scrolled{background:rgba(8,8,16,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--font-head);font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--text2);transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font);font-weight:600;cursor:pointer;transition:all 0.2s;border:none;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#080810;padding:12px 24px;border-radius:100px;font-size:14px}
+.btn-primary:hover{background:#d4ff6e;transform:translateY(-1px);box-shadow:0 8px 30px rgba(200,255,87,0.3)}
+.btn-ghost{background:transparent;color:var(--text);padding:12px 24px;border-radius:100px;font-size:14px;border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--surface);border-color:var(--border2)}
+.btn-lg{padding:16px 36px;font-size:16px;border-radius:100px}
+.btn-xl{padding:20px 48px;font-size:17px;border-radius:100px}
+
+/* ── Hero ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hero-glow{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.4}
+.hero-glow-1{width:600px;height:600px;background:radial-gradient(circle,rgba(200,255,87,0.25),transparent);top:-100px;right:-100px}
+.hero-glow-2{width:500px;height:500px;background:radial-gradient(circle,rgba(87,200,255,0.2),transparent);bottom:0;left:-100px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,80px);align-items:center}
+.hero-left{position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(200,255,87,0.08);border:1px solid rgba(200,255,87,0.2);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--accent);margin-bottom:28px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-title{margin-bottom:24px}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line span{display:block;animation:slideUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0;transform:translateY(100%)}
+.hero-title .line:nth-child(1) span{animation-delay:0.1s}
+.hero-title .line:nth-child(2) span{animation-delay:0.2s}
+.hero-title .line:nth-child(3) span{animation-delay:0.3s}
+@keyframes slideUp{to{opacity:1;transform:translateY(0)}}
+.hero-desc{color:var(--text2);font-size:18px;line-height:1.65;margin-bottom:36px;max-width:520px;animation:fadeIn 1s 0.5s both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;animation:fadeIn 1s 0.7s both}
+.hero-social-proof{margin-top:36px;display:flex;align-items:center;gap:20px;animation:fadeIn 1s 0.9s both}
+.avatar-stack{display:flex}
+.avatar-stack .av{width:32px;height:32px;border-radius:50%;border:2px solid var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent2));margin-right:-8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#080810}
+.av-2{background:linear-gradient(135deg,var(--accent2),var(--accent4))!important}
+.av-3{background:linear-gradient(135deg,var(--accent4),var(--accent3))!important}
+.av-4{background:linear-gradient(135deg,var(--accent3),var(--accent))!important}
+.proof-text{font-size:13px;color:var(--text2)}
+.proof-text strong{color:var(--text)}
+.stars{color:var(--yellow);font-size:14px;display:block;margin-bottom:2px}
+
+/* Hero phone mockup */
+.hero-right{display:flex;justify-content:center;align-items:center;position:relative;animation:fadeIn 1s 0.4s both}
+.phone-frame{width:280px;height:560px;background:var(--surface);border:1.5px solid rgba(255,255,255,0.12);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04);flex-shrink:0}
+.phone-notch{width:100px;height:28px;background:var(--bg);border-radius:0 0 18px 18px;margin:0 auto;position:relative;z-index:2}
+.phone-screen{background:var(--bg);padding:0 12px 12px;height:calc(100% - 28px);overflow:hidden}
+.phone-glow{position:absolute;top:-20px;right:-20px;width:200px;height:200px;background:radial-gradient(circle,rgba(200,255,87,0.15),transparent);pointer-events:none}
+
+/* ── Stats Bar ── */
+.stats-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stat-item{text-align:center;padding:0 16px}
+.stat-num{font-family:var(--font-head);font-size:clamp(28px,3vw,44px);font-weight:800;color:var(--accent);letter-spacing:-1px}
+.stat-label{font-size:13px;color:var(--text2);margin-top:4px}
+
+/* ── Features ── */
+.features-header{text-align:center;margin-bottom:clamp(48px,6vw,80px)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:clamp(24px,3vw,36px);transition:border-color 0.3s,transform 0.3s}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.feature-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px;flex-shrink:0}
+.feature-card h3{font-family:var(--font-head);font-size:20px;font-weight:700;margin-bottom:10px}
+.feature-card p{color:var(--text2);font-size:15px;line-height:1.6}
+.feature-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-top:16px}
+
+/* ── App Preview ── */
+.preview-section{position:relative;overflow:hidden}
+.preview-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(200,255,87,0.06),transparent 70%);pointer-events:none}
+.screens-row{display:flex;gap:20px;align-items:flex-start;justify-content:center;padding:20px 0}
+.screen-card{background:var(--surface);border:1px solid var(--border);border-radius:28px;overflow:hidden;flex-shrink:0}
+.screen-card.large{width:260px}
+.screen-card.medium{width:220px;margin-top:40px}
+.screen-card.small{width:200px;margin-top:80px}
+.screen-label{text-align:center;margin-top:14px;font-size:12px;font-weight:600;color:var(--text2)}
+
+/* Screen content inside cards */
+.mock-screen{padding:16px;background:var(--bg)}
+.mock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mock-title{font-family:var(--font-head);font-size:16px;font-weight:700}
+.mock-ring{width:90px;height:90px;position:relative;margin:0 auto 14px}
+.mock-ring svg{transform:rotate(-90deg)}
+.mock-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mock-ring-center .n{font-family:var(--font-head);font-size:18px;font-weight:800}
+.mock-ring-center .l{font-size:9px;color:var(--text2)}
+.mock-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.mock-stat{background:var(--surface2);border-radius:8px;padding:8px;text-align:center}
+.mock-stat .v{font-family:var(--font-head);font-size:14px;font-weight:700}
+.mock-stat .l{font-size:9px;color:var(--text2);margin-top:2px}
+.mock-bar{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin:4px 0 8px}
+.mock-fill{height:100%;border-radius:2px}
+.mock-ex-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.mock-ex-name{font-size:11px;font-weight:500}
+.mock-ex-val{font-size:11px;font-weight:700;color:var(--accent)}
+.mock-food{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.mock-food-name{font-size:10px;font-weight:500}
+.mock-food-cal{font-size:10px;font-weight:700;color:var(--accent2)}
+
+/* ── Workout Section ── */
+.split-section{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,100px);align-items:center}
+.split-section.reverse .split-right{order:-1}
+.split-left .eyebrow{margin-bottom:12px}
+.split-left h2{margin-bottom:20px}
+.split-left p{color:var(--text2);font-size:16px;line-height:1.7;margin-bottom:28px}
+.feature-list{display:flex;flex-direction:column;gap:14px}
+.feature-item{display:flex;align-items:flex-start;gap:14px}
+.fi-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.fi-text h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.fi-text p{font-size:13px;color:var(--text2);line-height:1.5}
+.demo-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);overflow:hidden}
+.demo-card-header{background:var(--surface2);padding:16px 20px;border-bottom:1px solid var(--border)}
+.demo-card-header h3{font-family:var(--font-head);font-size:16px;font-weight:700}
+.demo-card-header p{font-size:12px;color:var(--text2);margin-top:3px}
+.demo-table{width:100%;border-collapse:collapse;padding:0 20px 16px}
+.demo-table th{font-size:11px;color:var(--text3);text-align:center;padding:12px 8px 8px;font-weight:500;border-bottom:1px solid var(--border)}
+.demo-table td{text-align:center;padding:10px 8px;font-size:13px;border-bottom:1px solid var(--border)}
+.demo-table tr:last-child td{border-bottom:none}
+.set-badge{width:22px;height:22px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+
+/* ── Nutrition Section ── */
+.nutrition-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:28px;max-width:480px}
+.macro-visual{display:flex;gap:8px;margin-top:20px}
+.macro-col{flex:1}
+.macro-label{font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.macro-bar-v{height:80px;background:var(--surface3);border-radius:6px;overflow:hidden;display:flex;align-items:flex-end}
+.macro-fill-v{width:100%;border-radius:6px;transition:height 0.6s}
+.macro-val-v{font-family:var(--font-head);font-size:13px;font-weight:700;text-align:center;margin-top:5px}
+
+/* ── Pricing ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:920px;margin:0 auto}
+.pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:clamp(24px,3vw,36px);position:relative}
+.pricing-card.featured{border-color:rgba(200,255,87,0.4);background:linear-gradient(135deg,rgba(200,255,87,0.06),rgba(87,200,255,0.03))}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#080810;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.pricing-name{font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:8px}
+.pricing-price{margin-bottom:20px}
+.pricing-price .amount{font-family:var(--font-head);font-size:40px;font-weight:800;letter-spacing:-1px}
+.pricing-price .period{font-size:14px;color:var(--text2)}
+.pricing-desc{font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.5}
+.pricing-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.pf-item{display:flex;align-items:center;gap:10px;font-size:14px}
+.pf-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.pf-icon.yes{background:rgba(74,222,128,0.15);color:var(--green)}
+.pf-icon.no{background:rgba(255,255,255,0.05);color:var(--text3)}
+
+/* ── Testimonials ── */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testimonial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:28px}
+.testi-stars{color:var(--yellow);font-size:14px;margin-bottom:14px}
+.testi-quote{font-size:15px;line-height:1.65;color:var(--text2);margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:14px;flex-shrink:0}
+.testi-name{font-size:14px;font-weight:600}
+.testi-role{font-size:12px;color:var(--text2)}
+
+/* ── CTA ── */
+.cta-section{text-align:center;padding:clamp(80px,10vw,140px) 0;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(200,255,87,0.07),transparent 70%);pointer-events:none}
+.cta-section h2{margin-bottom:20px}
+.cta-section p{margin:0 auto 40px;max-width:560px}
+.store-badges{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.store-badge{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:12px 24px;transition:all 0.2s;cursor:pointer}
+.store-badge:hover{border-color:var(--accent);background:rgba(200,255,87,0.05)}
+.store-badge i{font-size:28px}
+.store-badge .sb-text .small{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.store-badge .sb-text .big{font-size:16px;font-weight:700}
+
+/* ── Footer ── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:clamp(48px,6vw,80px) 0 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-brand .logo{font-family:var(--font-head);font-size:22px;font-weight:800;margin-bottom:12px}
+.footer-brand .logo span{color:var(--accent)}
+.footer-brand p{font-size:14px;color:var(--text2);line-height:1.6;max-width:300px}
+.footer-col h4{font-size:13px;font-weight:700;margin-bottom:16px;color:var(--text)}
+.footer-col a{display:block;font-size:14px;color:var(--text2);margin-bottom:10px;transition:color 0.2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:28px;border-top:1px solid var(--border);flex-wrap:wrap;gap:16px}
+.footer-bottom p{font-size:13px;color:var(--text3)}
+.social-links{display:flex;gap:12px}
+.social-link{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text2);transition:all 0.2s;cursor:pointer}
+.social-link:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Divider ── */
+.section-divider{width:1px;height:40px;background:linear-gradient(to bottom,transparent,var(--border2),transparent);margin:0 auto}
+
+/* ── Animations on scroll ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s,transform 0.7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+/* ── Ticker ── */
+.ticker-wrap{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;overflow:hidden}
+.ticker{display:flex;animation:scroll-x 20s linear infinite;white-space:nowrap}
+.ticker-item{display:flex;align-items:center;gap:8px;padding:0 32px;font-size:13px;font-weight:600;color:var(--text2)}
+.ticker-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);flex-shrink:0}
+@keyframes scroll-x{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── DB Section ── */
+.db-section{background:var(--bg2);padding:clamp(64px,8vw,100px) 0}
+.db-table-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.db-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.db-card .table-name{font-family:'Courier New',monospace;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.db-card .field{font-size:11px;color:var(--text2);padding:2px 0;border-bottom:1px solid var(--border)}
+.db-card .field:last-child{border-bottom:none}
+.db-card .field .type{color:var(--text3);font-size:10px;float:right;font-family:'Courier New',monospace}
+
+/* ── Responsive ── */
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .split-section{grid-template-columns:1fr}
+  .split-section.reverse .split-right{order:0}
+  .testimonials-grid{grid-template-columns:1fr 1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .db-table-cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .features-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .testimonials-grid{grid-template-columns:1fr}
+  .screens-row{overflow-x:auto;padding:20px;justify-content:flex-start}
+  .hero-actions .btn-ghost{display:none}
+  .db-table-cards{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ── -->
+<nav id="navbar">
+  <div class="nav-logo">apex<span>.</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#app">App</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#database">Database</a>
+    <a href="#testimonials">Reviews</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#" class="btn btn-ghost">Sign In</a>
+    <a href="#pricing" class="btn btn-primary">Get Started →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-glow hero-glow-1"></div>
+    <div class="hero-glow hero-glow-2"></div>
+    <!-- Grid pattern -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.03" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="g" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#g)"/>
+    </svg>
+  </div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-badge">🔥 Version 2.0 now available</div>
+        <h1 class="hero-title display display-xl">
+          <span class="line"><span>Your Elite</span></span>
+          <span class="line"><span class="gradient-text">Fitness OS</span></span>
+          <span class="line"><span style="font-size:0.6em;opacity:0.5;font-weight:400">Built for the serious.</span></span>
+        </h1>
+        <p class="hero-desc">
+          Track workouts, nutrition, and body composition with military precision. 
+          AI-powered insights, premium analytics, and the cleanest UI in fitness.
+        </p>
+        <div class="hero-actions">
+          <a href="#pricing" class="btn btn-primary btn-xl">Start for Free →</a>
+          <a href="#app" class="btn btn-ghost btn-xl">See the App</a>
+        </div>
+        <div class="hero-social-proof">
+          <div class="avatar-stack">
+            <div class="av">JK</div><div class="av av-2">MR</div>
+            <div class="av av-3">TS</div><div class="av av-4">AL</div>
+          </div>
+          <div class="proof-text">
+            <span class="stars">★★★★★</span>
+            <strong>12,400+</strong> athletes already training with Apex
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div style="position:relative">
+          <!-- Floating stat cards -->
+          <div style="position:absolute;top:-20px;right:-40px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;z-index:2;animation:float 3s ease-in-out infinite">
+            <div style="font-size:11px;color:var(--text2)">Today's deficit</div>
+            <div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent)">−512 kcal</div>
+          </div>
+          <div style="position:absolute;bottom:30px;left:-50px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;z-index:2;animation:float 3s 1s ease-in-out infinite">
+            <div style="font-size:11px;color:var(--text2)">New PR 🏆</div>
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--yellow)">102.5 kg bench</div>
+          </div>
+          @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-glow"></div>
+            <div class="phone-screen">
+              <!-- Mini dashboard inside phone -->
+              <div style="background:var(--bg);padding:12px 8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                  <div style="font-family:var(--font-head);font-size:13px;font-weight:700">Good morning 👋</div>
+                  <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));font-family:var(--font-head);font-size:9px;font-weight:700;color:#080810;display:flex;align-items:center;justify-content:center">AJ</div>
+                </div>
+                <!-- Ring -->
+                <div style="position:relative;width:80px;height:80px;margin:0 auto 12px">
+                  <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg)">
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="8"/>
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="#C8FF57" stroke-width="8" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="52"/>
+                  </svg>
+                  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                    <div style="font-family:var(--font-head);font-size:16px;font-weight:800">1,835</div>
+                    <div style="font-size:8px;color:var(--text2)">eaten</div>
+                  </div>
+                </div>
+                <!-- Macros -->
+                <div style="display:flex;gap:4px;margin-bottom:10px">
+                  <div style="flex:1;text-align:center">
+                    <div style="height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="width:78%;height:100%;background:#60A5FA"></div></div>
+                    <div style="font-size:8px;color:var(--text2)">P 144g</div>
+                  </div>
+                  <div style="flex:1;text-align:center">
+                    <div style="height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="width:55%;height:100%;background:#FBBF24"></div></div>
+                    <div style="font-size:8px;color:var(--text2)">C 198g</div>
+                  </div>
+                  <div style="flex:1;text-align:center">
+                    <div style="height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="width:62%;height:100%;background:#F87171"></div></div>
+                    <div style="font-size:8px;color:var(--text2)">F 52g</div>
+                  </div>
+                </div>
+                <!-- Stats -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+                  <div style="background:var(--surface);border-radius:8px;padding:8px;text-align:center">
+                    <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--green)">7,842</div>
+                    <div style="font-size:8px;color:var(--text2)">Steps</div>
+                    <div style="height:2px;background:var(--surface3);border-radius:1px;overflow:hidden;margin-top:3px"><div style="width:78%;height:100%;background:var(--green)"></div></div>
+                  </div>
+                  <div style="background:var(--surface);border-radius:8px;padding:8px;text-align:center">
+                    <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent4)">12 🔥</div>
+                    <div style="font-size:8px;color:var(--text2)">Streak</div>
+                  </div>
+                </div>
+                <!-- Workout -->
+                <div style="background:var(--surface);border-radius:8px;padding:8px;display:flex;align-items:center;gap:8px">
+                  <div style="width:24px;height:24px;border-radius:6px;background:rgba(200,255,87,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">🏋️</div>
+                  <div>
+                    <div style="font-size:10px;font-weight:600">Push Day A</div>
+                    <div style="font-size:9px;color:var(--green)">✓ Completed — 48 min</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item"><span class="ticker-dot"></span>Workout Logging</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Calorie Tracking</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>PR Detection</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Weight Trends</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>AI Insights</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Step Tracking</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Macro Tracking</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Cardio Logging</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Body Composition</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Progress Photos</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Rest Timer</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Streak System</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Workout Logging</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Calorie Tracking</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>PR Detection</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Weight Trends</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>AI Insights</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Step Tracking</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Macro Tracking</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Cardio Logging</span>
+  </div>
+</div>
+
+<!-- ── STATS ── -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-num" data-count="12400">0</div>
+        <div class="stat-label">Active Athletes</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <div class="stat-num" data-count="840000">0</div>
+        <div class="stat-label">Workouts Logged</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <div class="stat-num" data-count="4800000">0</div>
+        <div class="stat-label">Meals Tracked</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">App Store Rating</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ── -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="features-header reveal">
+      <div class="eyebrow">Everything you need</div>
+      <h2 class="display display-lg">Built different. <br><span class="gradient-text">Built for results.</span></h2>
+      <p class="lead" style="margin:20px auto 0">Every feature designed around one goal: helping you make consistent, measurable progress.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(200,255,87,0.1)">🏋️</div>
+        <h3>Workout Tracking</h3>
+        <p>Log sets, reps, and weight with auto-suggested loads based on previous sessions. Full exercise database with 500+ movements.</p>
+        <span class="feature-tag" style="background:rgba(200,255,87,0.1);color:var(--accent)">PR Detection</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon" style="background:rgba(87,200,255,0.1)">🍽️</div>
+        <h3>Precision Nutrition</h3>
+        <p>Barcode scanner, macro tracking, custom foods, and saved meals. Smart deficit/surplus calculation tied to your goals.</p>
+        <span class="feature-tag" style="background:rgba(87,200,255,0.1);color:var(--accent2)">TDEE Auto-calc</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon" style="background:rgba(180,87,255,0.1)">📈</div>
+        <h3>AI Insights</h3>
+        <p>Plateau detection, strength trend analysis, recovery recommendations. Get smarter coaching without the expensive trainer.</p>
+        <span class="feature-tag" style="background:rgba(180,87,255,0.1);color:var(--accent4)">Smart Alerts</span>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(74,222,128,0.1)">⚖️</div>
+        <h3>Body Composition</h3>
+        <p>Daily weigh-ins with trend smoothing to filter noise. Body fat tracking, measurements, and goal projection with estimated dates.</p>
+        <span class="feature-tag" style="background:rgba(74,222,128,0.1);color:var(--green)">Trend Smoothing</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon" style="background:rgba(251,191,36,0.1)">👟</div>
+        <h3>Step & Cardio</h3>
+        <p>Manual and GPS-tracked cardio. Running, cycling, HIIT and 15+ sport types. Full integration with Apple Health and Google Fit.</p>
+        <span class="feature-tag" style="background:rgba(251,191,36,0.1);color:var(--yellow)">GPS Tracking</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon" style="background:rgba(248,113,113,0.1)">🔥</div>
+        <h3>Streaks & Habits</h3>
+        <p>Daily streak tracking, achievement badges, weekly reports. Stay accountable with push notifications and habit reinforcement.</p>
+        <span class="feature-tag" style="background:rgba(248,113,113,0.1);color:var(--red)">20+ Badges</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORKOUT DEEP DIVE ── -->
+<section class="section" id="app" style="background:var(--bg2)">
+  <div class="container">
+    <div class="split-section">
+      <div class="split-left reveal">
+        <div class="eyebrow">Workout Logging</div>
+        <h2 class="display display-md">Strength tracking that<br><span class="gradient-text">actually works</span></h2>
+        <p>Built by lifters, for lifters. Every detail of the logging flow is designed to be fast enough to use between sets.</p>
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="fi-icon" style="background:rgba(200,255,87,0.1)">⚡</div>
+            <div class="fi-text">
+              <h4>Auto-load suggestions</h4>
+              <p>Suggests your previous weight and reps. One tap to copy the last set.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon" style="background:rgba(87,200,255,0.1)">🏆</div>
+            <div class="fi-text">
+              <h4>Instant PR detection</h4>
+              <p>Highlights new personal records in real-time. Tracks 1RM, 3RM, 5RM, and volume PRs.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon" style="background:rgba(251,191,36,0.1)">⏱️</div>
+            <div class="fi-text">
+              <h4>Rest timer</h4>
+              <p>Auto-starts after each set. Configurable per exercise. Counts up and down.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon" style="background:rgba(180,87,255,0.1)">📊</div>
+            <div class="fi-text">
+              <h4>Volume analytics</h4>
+              <p>Weekly volume per muscle group, strength curves, training frequency heat maps.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="split-right reveal reveal-delay-2">
+        <div class="demo-card">
+          <div class="demo-card-header">
+            <h3>🏋️ Bench Press — Push Day A</h3>
+            <p>Chest · Anterior Deltoid · Triceps · <span style="color:var(--accent)">NEW PR</span></p>
+          </div>
+          <table class="demo-table" style="padding:0">
+            <thead>
+              <tr>
+                <th>Set</th><th>Previous</th><th>kg</th><th>Reps</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="set-badge" style="background:rgba(200,255,87,0.15);color:var(--accent)">1</span></td>
+                <td style="color:var(--text3);font-size:12px">97.5 × 5</td>
+                <td><strong>100</strong></td><td>5</td>
+                <td><span style="color:var(--green);font-size:18px">✓</span></td>
+              </tr>
+              <tr>
+                <td><span class="set-badge" style="background:rgba(200,255,87,0.15);color:var(--accent)">2</span></td>
+                <td style="color:var(--text3);font-size:12px">97.5 × 5</td>
+                <td><strong>100</strong></td><td>4</td>
+                <td><span style="color:var(--green);font-size:18px">✓</span></td>
+              </tr>
+              <tr>
+                <td><span class="set-badge" style="background:var(--surface3);color:var(--text2)">3</span></td>
+                <td style="color:var(--text3);font-size:12px">97.5 × 4</td>
+                <td><input type="number" value="100" style="width:54px;text-align:center;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:6px;font-size:13px;font-family:var(--font)"></td>
+                <td><input type="number" placeholder="—" style="width:44px;text-align:center;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:6px;font-size:13px;font-family:var(--font)"></td>
+                <td><span style="font-size:18px;opacity:0.3;cursor:pointer">☐</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--text2)">Total: <strong style="color:var(--text)">2,700 kg volume</strong></span>
+            <span style="background:rgba(251,191,36,0.1);color:var(--yellow);font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px">⏱ 1:45</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent)">48</div>
+            <div style="font-size:11px;color:var(--text2)">min session</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent2)">16</div>
+            <div style="font-size:11px;color:var(--text2)">sets logged</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--yellow)">7.4k</div>
+            <div style="font-size:11px;color:var(--text2)">kg volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DATABASE SECTION ── -->
+<section class="db-section" id="database">
+  <div class="container">
+    <div class="features-header reveal" style="text-align:center;margin-bottom:48px">
+      <div class="eyebrow">Supabase + PostgreSQL</div>
+      <h2 class="display display-lg">Production-ready<br><span class="gradient-text">database schema</span></h2>
+      <p class="lead" style="margin:20px auto 0">25 tables, row-level security, real-time subscriptions, auto-TDEE calculation. Drop the SQL in Supabase and you're live.</p>
+    </div>
+    <div class="db-table-cards reveal">
+      <div class="db-card">
+        <div class="table-name">profiles</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">email <span class="type">text</span></div>
+        <div class="field">weight_kg <span class="type">numeric</span></div>
+        <div class="field">target_calories <span class="type">int</span></div>
+        <div class="field">fitness_goal <span class="type">text</span></div>
+        <div class="field">tdee_kcal <span class="type">int</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">workout_logs</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">user_id <span class="type">uuid FK</span></div>
+        <div class="field">name <span class="type">text</span></div>
+        <div class="field">started_at <span class="type">timestamptz</span></div>
+        <div class="field">total_volume_kg <span class="type">numeric</span></div>
+        <div class="field">duration_seconds <span class="type">int</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">nutrition_logs</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">user_id <span class="type">uuid FK</span></div>
+        <div class="field">food_name <span class="type">text</span></div>
+        <div class="field">calories <span class="type">numeric</span></div>
+        <div class="field">protein_g <span class="type">numeric</span></div>
+        <div class="field">meal_type <span class="type">text</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">weight_logs</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">user_id <span class="type">uuid FK</span></div>
+        <div class="field">log_date <span class="type">date</span></div>
+        <div class="field">weight_kg <span class="type">numeric</span></div>
+        <div class="field">body_fat_pct <span class="type">numeric</span></div>
+        <div class="field">time_of_day <span class="type">text</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">exercises</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">name <span class="type">text</span></div>
+        <div class="field">muscle_primary <span class="type">text</span></div>
+        <div class="field">equipment <span class="type">text</span></div>
+        <div class="field">difficulty <span class="type">text</span></div>
+        <div class="field">instructions <span class="type">text</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">set_logs</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">exercise_log_id <span class="type">uuid FK</span></div>
+        <div class="field">weight_kg <span class="type">numeric</span></div>
+        <div class="field">reps <span class="type">int</span></div>
+        <div class="field">rpe <span class="type">numeric</span></div>
+        <div class="field">is_pr <span class="type">boolean</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">cardio_logs</div>
+        <div class="field">id <span class="type">uuid PK</span></div>
+        <div class="field">activity_type <span class="type">text</span></div>
+        <div class="field">distance_m <span class="type">numeric</span></div>
+        <div class="field">avg_pace_sec_km <span class="type">int</span></div>
+        <div class="field">calories_burned <span class="type">int</span></div>
+        <div class="field">source <span class="type">text</span></div>
+      </div>
+      <div class="db-card">
+        <div class="table-name">step_logs + more</div>
+        <div class="field">foods <span class="type">25g macros</span></div>
+        <div class="field">personal_records <span class="type">PR tracking</span></div>
+        <div class="field">achievements <span class="type">16 badges</span></div>
+        <div class="field">streaks <span class="type">5 types</span></div>
+        <div class="field">progress_photos <span class="type">storage</span></div>
+        <div class="field">weekly_reports <span class="type">cached</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px" class="reveal">
+      <span style="background:rgba(200,255,87,0.1);color:var(--accent);border:1px solid rgba(200,255,87,0.2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">25 Tables</span>
+      <span style="background:rgba(87,200,255,0.1);color:var(--accent2);border:1px solid rgba(87,200,255,0.2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">Row Level Security</span>
+      <span style="background:rgba(180,87,255,0.1);color:var(--accent4);border:1px solid rgba(180,87,255,0.2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">Auto TDEE Triggers</span>
+      <span style="background:rgba(74,222,128,0.1);color:var(--green);border:1px solid rgba(74,222,128,0.2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">12 Indexes</span>
+      <span style="background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">3 Views</span>
+      <span style="background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">4 Triggers</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="section" id="testimonials">
+  <div class="container">
+    <div class="features-header reveal" style="text-align:center;margin-bottom:48px">
+      <div class="eyebrow">Testimonials</div>
+      <h2 class="display display-lg">Real athletes. <span class="gradient-text">Real results.</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Switched from Strong + MFP. Having everything in one app with the deficit tracker is a game changer. Down 8kg in 12 weeks."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#080810">JK</div>
+          <div><div class="testi-name">Jake K.</div><div class="testi-role">Powerlifter · 3 years training</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The TDEE auto-calculation finally got my bulking macros right. Gained 4kg in 8 weeks with minimal fat — best recomp I've ever done."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent2),var(--accent4));color:#080810">MR</div>
+          <div><div class="testi-name">Marcus R.</div><div class="testi-role">Bodybuilder · 6 years training</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The weight trend smoothing is genius. I stopped freaking out about daily fluctuations and finally see the actual trend. Lost 12kg so far."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent4),var(--accent3));color:white">SL</div>
+          <div><div class="testi-name">Sophie L.</div><div class="testi-role">Runner · Fitness enthusiast</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="section" id="pricing" style="background:var(--bg2)">
+  <div class="container">
+    <div class="features-header reveal" style="text-align:center;margin-bottom:48px">
+      <div class="eyebrow">Pricing</div>
+      <h2 class="display display-lg">Serious training, <span class="gradient-text">serious value</span></h2>
+      <p class="lead" style="margin:20px auto 0">Less than a protein shake a week. Cancel anytime.</p>
+    </div>
+    <div class="pricing-grid reveal">
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price"><span class="amount">$0</span><span class="period"> / forever</span></div>
+        <div class="pricing-desc">Everything you need to start tracking. No credit card required.</div>
+        <div class="pricing-features">
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Workout logging (3 templates)</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Calorie tracking (basic)</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Weight logging</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Step tracking</div>
+          <div class="pf-item"><span class="pf-icon no">—</span><span style="color:var(--text3)">AI Insights</span></div>
+          <div class="pf-item"><span class="pf-icon no">—</span><span style="color:var(--text3)">Advanced analytics</span></div>
+          <div class="pf-item"><span class="pf-icon no">—</span><span style="color:var(--text3)">Progress photos</span></div>
+        </div>
+        <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;border-radius:100px;padding:14px">Get Started Free</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-name">Pro</div>
+        <div class="pricing-price"><span class="amount accent-text">$9</span><span class="period"> / month</span></div>
+        <div class="pricing-desc">Everything serious athletes need. Unlock the full Apex experience.</div>
+        <div class="pricing-features">
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Unlimited workouts & templates</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Full nutrition suite + barcode scan</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>AI Insights & recommendations</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Advanced analytics & charts</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Progress photos</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Apple Health / Google Fit sync</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Weekly PDF reports</div>
+        </div>
+        <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;border-radius:100px;padding:14px">Start Pro — $9/mo</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Annual</div>
+        <div class="pricing-price"><span class="amount">$6</span><span class="period"> / month <span style="color:var(--green);font-size:12px">Save 33%</span></span></div>
+        <div class="pricing-desc">All Pro features billed annually. Best value for committed athletes.</div>
+        <div class="pricing-features">
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Everything in Pro</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Priority support</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Early access to new features</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Garmin sync (when available)</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Custom achievement badges</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>Data export (CSV + JSON)</div>
+          <div class="pf-item"><span class="pf-icon yes">✓</span>$72/year (vs $108)</div>
+        </div>
+        <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;border-radius:100px;padding:14px">Go Annual — $72/yr</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="reveal">
+      <h2 class="display display-lg">Stop guessing.<br><span class="gradient-text">Start progressing.</span></h2>
+      <p class="lead" style="color:var(--text2)">Join 12,400+ athletes who track their training with Apex. Free to start, powerful enough to grow with.</p>
+      <div class="store-badges">
+        <div class="store-badge">
+          <span style="font-size:28px">🍎</span>
+          <div class="sb-text">
+            <div class="small">Download on the</div>
+            <div class="big">App Store</div>
+          </div>
+        </div>
+        <div class="store-badge">
+          <span style="font-size:28px">📱</span>
+          <div class="sb-text">
+            <div class="small">Get it on</div>
+            <div class="big">Google Play</div>
+          </div>
+        </div>
+        <a href="#" class="btn btn-primary btn-xl">Try Web App →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">apex<span>.</span></div>
+        <p>The premium fitness tracking ecosystem built for athletes who take training seriously. Track everything. Miss nothing.</p>
+        <div class="social-links" style="margin-top:20px">
+          <div class="social-link">𝕏</div>
+          <div class="social-link">in</div>
+          <div class="social-link">ig</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">Features</a>
+        <a href="#">Pricing</a>
+        <a href="#">Changelog</a>
+        <a href="#">Roadmap</a>
+        <a href="#">API Docs</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Blog</a>
+        <a href="#">Help Center</a>
+        <a href="#">Community</a>
+        <a href="#">Exercise Database</a>
+        <a href="#">Calculators</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Apex Fitness Inc. All rights reserved.</p>
+      <p style="color:var(--text3)">Built with ❤️ for athletes everywhere</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Count-up animation
+function animateCount(el, target) {
+  const suffix = target >= 1000000 ? 'M+' : target >= 1000 ? 'k+' : '+';
+  const display = target >= 1000000 ? (target/1000000).toFixed(1) : target >= 1000 ? Math.round(target/1000) : target;
+  let current = 0;
+  const duration = 1500;
+  const step = display / (duration / 16);
+  const timer = setInterval(() => {
+    current += step;
+    if(current >= display) {
+      el.textContent = display + suffix;
+      clearInterval(timer);
+    } else {
+      el.textContent = Math.round(current) + suffix;
+    }
+  }, 16);
+}
+
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting && e.target.dataset.count) {
+      animateCount(e.target, parseInt(e.target.dataset.count));
+      countObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+</script>
+</body>
+</html>
