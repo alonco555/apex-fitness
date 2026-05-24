@@ -3,6 +3,9 @@ import { useState } from 'react'
 import { useAuth } from '@/lib/useAuth'
 import AppShell from '@/components/AppShell'
 import Loader from '@/components/Loader'
+import dynamic from 'next/dynamic'
+
+const BarcodeScanner = dynamic(() => import('@/components/BarcodeScanner'), { ssr: false })
 
 const FOODS_DB = [
   {name:'Chicken Breast (grilled)', he:'חזה עוף צלוי',    cal:165,p:31,c:0, f:4,  per:'100g'},
@@ -42,6 +45,10 @@ export default function Nutrition() {
   const [search, setSearch]     = useState('')
   const [qty, setQty]           = useState('100')
   const [water, setWater]       = useState(0)
+  const [scanning, setScanning] = useState(false)
+  const [scanned, setScanned]   = useState<typeof FOODS_DB[0]|null>(null)
+  const [scanLoading, setScanLoading] = useState(false)
+  const [scanError, setScanError]     = useState('')
 
   if (loading) return <Loader />
 
@@ -66,6 +73,32 @@ export default function Nutrition() {
 
   const removeFood = (meal: Meal, idx: number) => {
     setLog(prev=>({...prev,[meal]:prev[meal].filter((_,i)=>i!==idx)}))
+  }
+
+  const handleBarcode = async (barcode: string) => {
+    setScanning(false)
+    setScanLoading(true)
+    setScanError('')
+    setScanned(null)
+    try {
+      const res  = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
+      const data = await res.json()
+      if (data.status !== 1) { setScanError('Product not found in database.'); setScanLoading(false); return }
+      const p = data.product
+      const n = p.nutriments || {}
+      setScanned({
+        name: p.product_name || p.abbreviated_product_name || 'Unknown Product',
+        he:   '',
+        cal:  Math.round(n['energy-kcal_100g'] || n['energy_100g'] / 4.184 || 0),
+        p:    Math.round(n['proteins_100g']     || 0),
+        c:    Math.round(n['carbohydrates_100g']|| 0),
+        f:    Math.round(n['fat_100g']          || 0),
+        per:  '100g',
+      })
+    } catch {
+      setScanError('Failed to fetch product. Check your connection.')
+    }
+    setScanLoading(false)
   }
 
   return (
@@ -190,7 +223,44 @@ export default function Nutrition() {
           <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={()=>setActiveMeal(null)}>
             <div style={{background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:'20px 20px 0 0',padding:24,width:'100%',maxWidth:520,maxHeight:'80vh',overflow:'auto'}} onClick={e=>e.stopPropagation()}>
               <div style={{width:36,height:4,background:'var(--surface3)',borderRadius:2,margin:'0 auto 20px'}}/>
-              <div style={{fontFamily:'var(--font-head)',fontSize:17,fontWeight:700,marginBottom:16}}>Add to {activeMeal}</div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+                <div style={{fontFamily:'var(--font-head)',fontSize:17,fontWeight:700}}>Add to {activeMeal}</div>
+                <button onClick={()=>{setScanning(true);setScanError('');setScanned(null)}}
+                  style={{background:'var(--surface2)',border:'1px solid var(--border2)',borderRadius:8,padding:'7px 14px',fontSize:12,fontWeight:600,color:'var(--text2)',cursor:'pointer'}}>
+                  Scan Barcode
+                </button>
+              </div>
+
+              {scanning && (
+                <div style={{marginBottom:16}}>
+                  <BarcodeScanner onDetected={handleBarcode} onClose={()=>setScanning(false)}/>
+                </div>
+              )}
+
+              {scanLoading && (
+                <div style={{textAlign:'center',padding:'20px 0',fontSize:13,color:'var(--text2)'}}>Looking up product...</div>
+              )}
+
+              {scanError && (
+                <div style={{background:'var(--red-dim)',border:'1px solid rgba(248,113,113,0.2)',borderRadius:9,padding:'10px 14px',fontSize:13,color:'var(--red)',marginBottom:12}}>{scanError}</div>
+              )}
+
+              {scanned && (
+                <div style={{background:'var(--accent-dim)',border:'1px solid rgba(200,255,87,0.2)',borderRadius:12,padding:16,marginBottom:16}}>
+                  <div style={{fontFamily:'var(--font-head)',fontSize:15,fontWeight:700,marginBottom:4}}>{scanned.name}</div>
+                  <div style={{fontSize:12,color:'var(--text2)',marginBottom:12}}>Per 100g · P:{scanned.p}g · C:{scanned.c}g · F:{scanned.f}g · {scanned.cal} kcal</div>
+                  <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                    <input value={qty} onChange={e=>setQty(e.target.value)} type="number"
+                      style={{width:70,background:'var(--surface)',border:'1px solid var(--border2)',borderRadius:8,padding:'9px 12px',color:'var(--text)',fontSize:14,textAlign:'center'}}/>
+                    <span style={{fontSize:12,color:'var(--text3)'}}>g</span>
+                    <button onClick={()=>{addFood(scanned);setScanned(null)}}
+                      style={{flex:1,background:'var(--accent)',color:'#07070F',border:'none',borderRadius:8,padding:'10px',fontSize:13,fontWeight:700,cursor:'pointer'}}>
+                      Add to {activeMeal}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div style={{display:'flex',gap:8,marginBottom:12}}>
                 <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search foods..."
                   style={{flex:1,background:'var(--surface)',border:'1px solid var(--border2)',borderRadius:9,padding:'11px 13px',color:'var(--text)',fontSize:14}}
