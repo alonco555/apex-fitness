@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/useAuth'
 import AppShell from '@/components/AppShell'
 import Loader from '@/components/Loader'
@@ -40,11 +40,26 @@ function calcMacros(entries: FoodEntry[]) {
 
 export default function Nutrition() {
   const { loading, profile } = useAuth()
+  const today = new Date().toDateString()
   const [log, setLog]           = useState<Log>({Breakfast:[],Lunch:[],Dinner:[],Snacks:[]})
   const [activeMeal, setActiveMeal] = useState<Meal|null>(null)
   const [search, setSearch]     = useState('')
   const [qty, setQty]           = useState('100')
   const [water, setWater]       = useState(0)
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('apex_nutrition') || '{}')
+      if (saved.date === today) {
+        if (saved.log)   setLog(saved.log)
+        if (saved.water) setWater(saved.water)
+      }
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('apex_nutrition', JSON.stringify({ date: today, log, water }))
+  }, [log, water])
   const [scanning, setScanning] = useState(false)
   const [scanned, setScanned]   = useState<typeof FOODS_DB[0]|null>(null)
   const [scanLoading, setScanLoading] = useState(false)
