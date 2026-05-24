@@ -1,8 +1,18 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/lib/useAuth'
 import AppShell from '@/components/AppShell'
 import Loader from '@/components/Loader'
+
+interface Session {
+  id: string
+  name: string
+  date: string
+  duration: string
+  volume: number
+  sets: number
+  type: 'gym' | 'cardio'
+}
 
 const TEMPLATES = [
   { id:'push', name:'Push Day', muscles:'Chest · Shoulders · Triceps',
@@ -90,13 +100,19 @@ const CARDIO = [
 const CARDIO_CATEGORIES = ['Running', 'Cardio', 'Sport'] as const
 
 export default function Workouts() {
-  const { loading } = useAuth()
+  const { loading, profile } = useAuth()
   const [tab, setTab]           = useState<'log'|'cardio'|'history'>('log')
   const [selected, setSelected] = useState<typeof TEMPLATES[0]|null>(null)
   const [cardioCategory, setCardioCategory] = useState<typeof CARDIO_CATEGORIES[number]>('Running')
   const [cardioType, setCardioType]   = useState<typeof CARDIO[0]|null>(null)
   const [cardioForm, setCardioForm]   = useState({duration:'',distance:'',calories:'',notes:''})
   const [loggedSets, setLoggedSets]   = useState<Record<string,{reps:string,weight:string,done:boolean}[]>>({})
+  const [history, setHistory]         = useState<Session[]>([])
+  const startTimeRef                  = useRef<number>(0)
+
+  useEffect(() => {
+    try { setHistory(JSON.parse(localStorage.getItem('apex_workouts') || '[]')) } catch {}
+  }, [])
 
   if (loading) return <Loader />
 
@@ -107,6 +123,48 @@ export default function Workouts() {
     })
     setLoggedSets(sets)
     setSelected(t)
+    startTimeRef.current = Date.now()
+  }
+
+  const saveSession = (session: Session) => {
+    const updated = [session, ...history]
+    setHistory(updated)
+    localStorage.setItem('apex_workouts', JSON.stringify(updated))
+  }
+
+  const finishWorkout = () => {
+    if (!selected) return
+    const durationMin = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 60000))
+    const userWeight  = profile?.weight || 80
+    const calories    = Math.round(4 * userWeight * (durationMin / 60)) // MET 4 for weight training
+    saveSession({
+      id:       Date.now().toString(),
+      name:     selected.name,
+      date:     new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      duration: `${durationMin} min`,
+      volume:   Math.round(totalVol),
+      sets:     doneSets,
+      type:     'gym',
+    })
+    setSelected(null); setLoggedSets({}); setTab('history')
+  }
+
+  const finishCardio = () => {
+    if (!cardioType) return
+    const durationMin = (() => {
+      const [m, s] = cardioForm.duration.split(':').map(Number)
+      return isNaN(m) ? 0 : m + (s || 0) / 60
+    })()
+    saveSession({
+      id:       Date.now().toString(),
+      name:     cardioType.name,
+      date:     new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      duration: cardioForm.duration || '—',
+      volume:   0,
+      sets:     0,
+      type:     'cardio',
+    })
+    setCardioType(null); setCardioForm({duration:'',distance:'',calories:'',notes:''}); setTab('history')
   }
 
   const toggleSet = (exName:string, idx:number) => {
@@ -134,7 +192,7 @@ export default function Workouts() {
               <div style={{fontSize:13,color:'var(--accent)',fontWeight:600,background:'var(--accent-dim)',border:'1px solid rgba(200,255,87,0.2)',borderRadius:8,padding:'6px 14px'}}>
                 {selected.name} · {doneSets} sets · {Math.round(totalVol)} kg
               </div>
-              <button onClick={()=>{setSelected(null);setLoggedSets({})}}
+              <button onClick={finishWorkout}
                 style={{background:'var(--green)',color:'#07070F',border:'none',borderRadius:8,padding:'8px 18px',fontSize:13,fontWeight:700,cursor:'pointer'}}>
                 Finish
               </button>
@@ -259,7 +317,7 @@ export default function Workouts() {
                     placeholder={f.placeholder}/>
                 </div>
               ))}
-              <button onClick={()=>{setCardioType(null);setCardioForm({duration:'',distance:'',calories:'',notes:''})}}
+              <button onClick={finishCardio}
                 style={{width:'100%',background:'var(--accent)',color:'#07070F',border:'none',borderRadius:8,padding:'13px',fontWeight:700,fontSize:14,cursor:'pointer'}}>
                 Log {cardioType.name}
               </button>
@@ -269,9 +327,37 @@ export default function Workouts() {
 
         {/* HISTORY */}
         {tab==='history' && (
-          <div style={{textAlign:'center',padding:'72px 0'}}>
-            <div style={{fontSize:13,color:'var(--text3)',marginBottom:6}}>No sessions logged yet.</div>
-            <div style={{fontSize:12,color:'var(--text3)'}}>Complete a workout above to see your history here.</div>
+          <div>
+            {history.length === 0 ? (
+              <div style={{textAlign:'center',padding:'72px 0'}}>
+                <div style={{fontSize:13,color:'var(--text3)',marginBottom:6}}>No sessions logged yet.</div>
+                <div style={{fontSize:12,color:'var(--text3)'}}>Complete a workout to see it here.</div>
+              </div>
+            ) : history.map(h => (
+              <div key={h.id} style={{...card,marginBottom:10,display:'flex',alignItems:'center',gap:16}}>
+                <div style={{width:44,height:44,borderRadius:12,background:'var(--surface3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'var(--text3)',flexShrink:0}}>
+                  {h.type==='gym'?'GYM':'RUN'}
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:600,fontSize:14}}>{h.name}</div>
+                  <div style={{fontSize:12,color:'var(--text2)',marginTop:3}}>{h.date} · {h.duration}</div>
+                </div>
+                <div style={{display:'flex',gap:16,textAlign:'right',flexShrink:0}}>
+                  {h.sets > 0 && (
+                    <div>
+                      <div style={{fontFamily:'var(--font-head)',fontSize:14,fontWeight:700,color:'var(--accent)'}}>{h.sets}</div>
+                      <div style={{fontSize:10,color:'var(--text3)'}}>sets</div>
+                    </div>
+                  )}
+                  {h.volume > 0 && (
+                    <div>
+                      <div style={{fontFamily:'var(--font-head)',fontSize:14,fontWeight:700,color:'var(--green)'}}>{h.volume.toLocaleString()} kg</div>
+                      <div style={{fontSize:10,color:'var(--text3)'}}>volume</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
