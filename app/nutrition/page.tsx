@@ -5,21 +5,21 @@ import AppShell from '@/components/AppShell'
 import Loader from '@/components/Loader'
 
 const FOODS_DB = [
-  {name:'Chicken Breast (grilled)',cal:165,p:31,c:0,f:4,per:'100g'},
-  {name:'White Rice (cooked)',cal:130,p:3,c:28,f:0,per:'100g'},
-  {name:'Whole Eggs',cal:155,p:13,c:1,f:11,per:'100g'},
-  {name:'Greek Yogurt (plain)',cal:89,p:10,c:4,f:5,per:'100g'},
-  {name:'Oats (dry)',cal:389,p:17,c:66,f:7,per:'100g'},
-  {name:'Salmon (baked)',cal:208,p:28,c:0,f:10,per:'100g'},
-  {name:'Sweet Potato',cal:86,p:2,c:20,f:0,per:'100g'},
-  {name:'Whey Protein Shake',cal:120,p:25,c:3,f:2,per:'30g scoop'},
-  {name:'Avocado',cal:160,p:2,c:9,f:15,per:'100g'},
-  {name:'Banana',cal:89,p:1,c:23,f:0,per:'1 medium'},
-  {name:'Olive Oil',cal:884,p:0,c:0,f:100,per:'100ml'},
-  {name:'Cottage Cheese',cal:98,p:11,c:3,f:4,per:'100g'},
-  {name:'Almonds',cal:579,p:21,c:22,f:50,per:'100g'},
-  {name:'Broccoli (steamed)',cal:34,p:3,c:7,f:0,per:'100g'},
-  {name:'Ground Beef 90%',cal:176,p:26,c:0,f:8,per:'100g'},
+  {name:'Chicken Breast (grilled)', he:'חזה עוף צלוי',    cal:165,p:31,c:0, f:4,  per:'100g'},
+  {name:'White Rice (cooked)',      he:'אורז לבן מבושל',   cal:130,p:3, c:28,f:0,  per:'100g'},
+  {name:'Whole Eggs',               he:'ביצים שלמות',       cal:155,p:13,c:1, f:11, per:'100g'},
+  {name:'Greek Yogurt (plain)',     he:'יוגורט יווני',      cal:89, p:10,c:4, f:5,  per:'100g'},
+  {name:'Oats (dry)',               he:'שיבולת שועל',       cal:389,p:17,c:66,f:7,  per:'100g'},
+  {name:'Salmon (baked)',           he:'סלמון אפוי',        cal:208,p:28,c:0, f:10, per:'100g'},
+  {name:'Sweet Potato',             he:'בטטה',              cal:86, p:2, c:20,f:0,  per:'100g'},
+  {name:'Whey Protein Shake',       he:'שייק חלבון',        cal:120,p:25,c:3, f:2,  per:'30g scoop'},
+  {name:'Avocado',                  he:'אבוקדו',            cal:160,p:2, c:9, f:15, per:'100g'},
+  {name:'Banana',                   he:'בננה',              cal:89, p:1, c:23,f:0,  per:'1 medium'},
+  {name:'Olive Oil',                he:'שמן זית',           cal:884,p:0, c:0, f:100,per:'100ml'},
+  {name:'Cottage Cheese',           he:'קוטג׳',             cal:98, p:11,c:3, f:4,  per:'100g'},
+  {name:'Almonds',                  he:'שקדים',             cal:579,p:21,c:22,f:50, per:'100g'},
+  {name:'Broccoli (steamed)',       he:'ברוקולי מאודה',     cal:34, p:3, c:7, f:0,  per:'100g'},
+  {name:'Ground Beef 90%',          he:'בשר טחון 90%',      cal:176,p:26,c:0, f:8,  per:'100g'},
 ]
 
 const MEALS = ['Breakfast','Lunch','Dinner','Snacks'] as const
@@ -55,7 +55,8 @@ export default function Nutrition() {
   const remaining  = targetCals - totals.cal
   const pct        = (v:number,t:number) => Math.min(Math.round(v/t*100),100)
 
-  const filtered = FOODS_DB.filter(f=>!search || f.name.toLowerCase().includes(search.toLowerCase()))
+  const q = search.toLowerCase()
+  const filtered = FOODS_DB.filter(f=>!search || f.name.toLowerCase().includes(q) || f.he.includes(search))
 
   const addFood = (food: typeof FOODS_DB[0]) => {
     if (!activeMeal) return
