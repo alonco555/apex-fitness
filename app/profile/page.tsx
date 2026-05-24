@@ -67,7 +67,7 @@ export default function Profile() {
             <div style={{fontSize:13,color:'var(--text2)',marginTop:3}}>{user?.email}</div>
             <div style={{display:'flex',gap:8,marginTop:8,flexWrap:'wrap'}}>
               <span style={{fontSize:11,fontWeight:600,padding:'3px 10px',borderRadius:6,background:'var(--accent-dim)',color:'var(--accent)',border:'1px solid rgba(200,255,87,0.2)'}}>
-                {(profile?.goal||'fat_loss').replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}
+                {(profile?.goal||'fat_loss').replace('_',' ').replace(/\b\w/g,(c: string)=>c.toUpperCase())}
               </span>
               <span style={{fontSize:11,fontWeight:600,padding:'3px 10px',borderRadius:6,background:'var(--surface3)',color:'var(--text2)'}}>
                 Free Plan
@@ -112,7 +112,7 @@ export default function Profile() {
                   <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:5,letterSpacing:'0.02em'}}>Fitness Goal</label>
                   <select value={form.goal||''} onChange={e=>set('goal',e.target.value)} style={inputStyle}>
                     {['fat_loss','muscle_gain','recomp','performance','endurance'].map(o=>(
-                      <option key={o} value={o}>{o.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</option>
+                      <option key={o} value={o}>{o.replace('_',' ').replace(/\b\w/g,(c: string)=>c.toUpperCase())}</option>
                     ))}
                   </select>
                 </div>
