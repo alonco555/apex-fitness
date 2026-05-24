@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/useAuth'
 import AppShell from '@/components/AppShell'
 import Loader from '@/components/Loader'
@@ -144,6 +144,17 @@ export default function Programs() {
   const [addingTo, setAddingTo]       = useState<string|null>(null)
   const [activeCategory, setActiveCategory] = useState<string>('Gym')
   const [tab, setTab]                 = useState<'my'|'explore'>('my')
+  const [programSaved, setProgramSaved] = useState(false)
+
+  useEffect(() => {
+    try { const s = localStorage.getItem('apex_program'); if (s) setPlan(JSON.parse(s)) } catch {}
+  }, [])
+
+  const savePlan = () => {
+    localStorage.setItem('apex_program', JSON.stringify(plan))
+    setProgramSaved(true)
+    setTimeout(() => setProgramSaved(false), 2000)
+  }
 
   if (loading) return <Loader />
 
@@ -157,6 +168,7 @@ export default function Programs() {
 
   const applyTemplate = (templatePlan: WeekPlan) => {
     setPlan(templatePlan)
+    localStorage.setItem('apex_program', JSON.stringify(templatePlan))
     setTab('my')
   }
 
@@ -172,8 +184,8 @@ export default function Programs() {
             <h1 style={{fontFamily:'var(--font-head)',fontSize:26,fontWeight:800,letterSpacing:'-0.5px'}}>Programs</h1>
             <p style={{color:'var(--text2)',fontSize:13,marginTop:4}}>Build your weekly training schedule</p>
           </div>
-          <button style={{background:'var(--accent)',color:'#07070F',border:'none',borderRadius:8,padding:'9px 20px',fontSize:13,fontWeight:700,cursor:'pointer'}}>
-            Save Program
+          <button onClick={savePlan} style={{background:programSaved?'var(--green)':'var(--accent)',color:'#07070F',border:'none',borderRadius:8,padding:'9px 20px',fontSize:13,fontWeight:700,cursor:'pointer'}}>
+            {programSaved ? 'Saved' : 'Save Program'}
           </button>
         </div>
 
